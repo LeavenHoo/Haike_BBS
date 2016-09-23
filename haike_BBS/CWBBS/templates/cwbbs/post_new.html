@@ -1,0 +1,31 @@
+{% extends 'cwbbs/base.html' %}
+{% block content %}
+	<script type="text/javascript">
+        $(function () {
+            var editor = new wangEditor('id_text');
+            editor.create();
+			var editor = new wangEditor('id_summary');
+			editor.create();
+        });
+
+    </script>
+    <h3>创建新贴ing...</h3><br>
+    <form method="POST" class="post-form">{% csrf_token %}
+        
+		<div class="title_input"><h4>标题：</h4>{{ form.title }}</div>
+		<div class="title_input"><h4>类型：</h4>{{ form.category }}</div>
+		<br>
+		<br>
+		<h4>摘要：</h4>
+		<div class="summary_input">{{ form.summary }}</div>
+		<br>
+		<br>
+		<h4>正文：</h4>
+		<div class="content_input">{{ form.text }}</div>
+		<button type="submit" name="cancle" class="save btn btn-default">取消编辑</button>
+        <button type="submit" name="save_to_draft" class="save btn btn-default">保存到草稿</button>
+		<button type="submit" name="publish" class="save btn btn-default">保存并发布</button>          
+    </form>
+{% endblock %}
+
+

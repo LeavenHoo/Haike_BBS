@@ -1,0 +1,36 @@
+{% extends 'cwbbs/base.html' %}
+{% block content %}
+	<script type="text/javascript">
+        $(function () {
+            var editor = new wangEditor('id_text');
+            editor.create();
+			var editor = new wangEditor('id_summary');
+			editor.create();
+        });
+
+    </script>
+    <h3>编辑贴子ing...</h3><br>
+		
+    <form method="POST" class="post-form">{% csrf_token %}
+       <button type="submit" style="float:right;margin-right:20px;margin-top:2px;margin-bottom:20px;" class="save btn btn-default">保存</button>
+		<div class="title_input">
+		<h4>标题：</h4>{{ form.title }}</div>
+		<br>
+		<h4>类型:</h4>{{ form.category }}
+		<br>
+		<h4>摘要：</h4>
+		<div class="summary_input">{{ form.summary }}</div>
+		<br>
+		<br>
+		<h4>正文：</h4>
+		<div class="content_input">{{ form.text }}</div>
+		<button type="submit" name="cancle" style="float:right;margin-right:20px;margin-top:10px;margin-bottom:20px;" class="save btn btn-default">取消编辑</button>
+		<button type="submit" name="save" style="float:right;margin-right:20px;margin-top:10px;margin-bottom:20px;" class="save btn btn-default">保存</button>
+		{% if not post.published_date %}
+			{{post.published_date}}
+			<button type="submit" name="publish" style="float:right;margin-right:20px;margin-top:10px;margin-bottom:20px;" class="save btn btn-default">保存并发布</button>   
+		{%endif%}
+	</form>
+{% endblock %}
+
+

@@ -1,0 +1,35 @@
+{% extends 'cwbbs/base.html' %}
+{% block content %}
+    <div id="login" class="border_gray login_box" style="width:300px;margin:0 auto;margin-top:100px;">
+	<p style="font-size:20px;">账号登录 </p>
+
+
+
+    <form action="" method="post">{% csrf_token %}
+        <pre><label>用户名：</label><input   type = 'text' style="height:22px" placeholder="用户名" name="account"></pre>
+       <br>
+
+        <pre><label>密  码：</label><input type = 'password' style="height:22px" placeholder="密码" name="password"></pre>
+        <br>
+        <input type = 'submit' class="btn btn-default" placeholder="" value="提交">
+		{% if errors %}
+            {% for error in errors %}
+             <p style="color: red;margin:20 auto">
+                {{error}}
+             </p>
+            {% endfor %}
+		{% endif %}
+		{% if masage %}
+             <p style="color: red;margin:20 auto">
+                {{masage}}
+             </p>
+		{% endif %}
+        <br>
+		<br>
+
+        <a  href="/register">没有账号？注册新用户...</a>
+    </form>
+
+	
+	</div>
+{% endblock %}

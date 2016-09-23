@@ -1,0 +1,18 @@
+{% extends 'cwbbs/base.html' %}
+{% block content %}
+{%if posts %}
+    {% for post in posts %}
+        <div class="post">
+            
+            <h3><a href="{% url 'post_detail' pk=post.pk %}">正文：{{ post.title }}</a></h3>
+            <p>{{ post.text|truncatechars:200|safe }}</p>
+			<p class="date">created: {{ post.created_date|date:'Y-m-d,l,H:i:s' }}</p>
+        </div>
+    {% endfor %}
+{%else%}
+	<div class="post">
+		<h3 >您当前没有草稿，点击<font color="red"><a href="{% url 'post_new'%}">新增草稿</a></font></h3>
+	</div>
+
+{%endif%}
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends 'cwbbs/base.html' %}
+{% block content %}
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="refresh" content="4;url={% url 'index' %}">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>注册成功提示</title>
+</head>
+<body>
+    <h1>恭喜你！账号<font style="color:red">&nbsp{{username}}&nbsp</font>注册成功！</h1>
+	<br>
+	<p>4秒钟后跳转到网站首页，如果长时间没有响应请直接点击：</p>
+	<p><h2>将自动<a href="{% url 'index' %}"><font style="color:red">&nbsp返回首页&nbsp</font></h2></a></p>
+	
+	
+	<!--<a  href="{{last_url}}"><h1>点击这里<font style="color:red">返回上一页</font><h1></a>-->
+{% endblock %}

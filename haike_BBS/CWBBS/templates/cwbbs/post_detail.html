@@ -1,0 +1,294 @@
+{% extends 'cwbbs/index.html' %}
+{% load comments %} 
+{% get_comment_count for CWBBS.post as comment_count %} 
+{% get_comment_list for post as comment_list %}
+{% block content %}
+<Script language="javascript"> 
+
+var url = location.search; //获取url中"?"符后的字串 
+var theRequest = new Object(); 
+if (url.indexOf("?") != -1) { 
+alert("请勿重复提交评论");  
+} 
+
+</Script> 
+<script type="text/javascript">
+	$(function () {
+		var editor = new wangEditor('id_comment_content');
+		editor.create();
+	});
+</script>
+<div class="post_mark">
+	{% if not post.published_date %}
+	<a style="float:right;margin-left:20px;font-size:18px;" href="{% url 'post_publish' pk=post.pk%}" >发布</a>
+	{%endif%}
+	
+	<span>
+	<p>作者：<a href="{% url 'user_detail' pk=post.author_id %}"><font color="red">{{post.author.nickname|default:"佚名"}}</font></a>  </p><p>查看：{{post.views}}</p>   
+	<p>评论数：{{post.comments_count|default:"0"}}</p>
+	<p>	<i class="fa fa-thumbs-up"></i>
+		<span id='result0'>{{post.praise}}</span>
+	</p>
+	{{post.praise}}</p>  <p>排名：{{post.ranking}}</p> <p>发布于 {{post.published_date|date:'Y-m-d,l,H:i:s'}}</p>.....
+	</span>
+    {% if user.is_authenticated %}
+		{%if is_author %}	
+			<a class="btn btn-default" style="float:right;margin-right:20px;" href="{% url 'post_edit' pk=post.pk %}">编辑</a>
+			<a class="btn btn-default" style="float:right;margin-right:20px;" href="{% url 'post_delete' pk=post.pk %}">删除</a>
+
+		{%endif%}
+	{% endif %}
+	</div>
+    <h3>{{ post.title }}</h3>
+	<hr style="bolder:1px solid black;">
+
+	{%if post.summary%}
+		<div class="summary">摘要：<p>{{ post.summary|safe }}</p></div>
+	{% endif %}
+	<br>
+	<div class="content">
+	<p>
+	{{ post.text|safe}}
+
+	</p>
+	</div>
+	<div>
+	    <hr style="bolder:1px solid black;">
+		<form action="/praise/{{post.pk}}" method="post">{% csrf_token %}
+
+			<a  id='p_praise'><i style="margin-left:50%"class="fa fa-thumbs-up fa-2x"></i></a>
+			<span id='result'>{{post.praise}}</span>
+		</form>
+		
+
+	</div>
+	
+
+	
+	<h3><a href="#id_comment_content">评论:</a></h3>
+	<hr style="border:2px solid red">
+	
+{%for comment in comments %}
+	<table >
+	<tr>
+			<td rowspan=3 valign="top" style="width:50px;min-width:50px">
+				<div style="display:center;text-align:center;">
+					<img class="usefulornot" title="觉得有用" id="visitor_useful_{{comment.id}}" name="{{comment.id}}" style="width:60%;cursor: pointer;margin:0 auto;" src="../../static/img/up.png">
+				<div style="margin:0 auto;margin-bottom:-1px;margin-top:-1px;z-index:-1;float:top;white-space:normal;word-break:break-all;max_width:1000px;">
+				<span id="useful_num_{{comment.id}}"style="line-height:60%;color:#00EC00;width:30px;font-size:15px;max_width:100%" >{{comment.useful_counts}}</span><br>
+				{%if is_author%}
+					<span class="usefulornot useful" id="author_useful_{{comment.id}}" name="{{comment.id}}"  title="对我有用" style="color:gray;cursor: pointer;line-height:60%;width:30px;font-weight:bold;font-size:30px;margin:auto;">
+
+					{%if comment.post_user_accept%}
+						<span id="author_useful_span{{comment.id}}" style="color:#00EC00;">
+						&radic;
+						</span>
+					{%else%}
+
+						&radic;
+						
+					{%endif%}
+					</span>
+				{%else%}
+					{%if comment.post_user_accept%}
+						<span  style="line-height:60%;color:#00EC00;width:30px;font-weight:bold;font-size:30px;margin:auto;">&radic;</span>
+					{%else%}
+						<span  style="line-height:60%;color:gray;width:30px;font-weight:bold;font-size:30px;margin:auto;" >&radic;</span>
+					{%endif%}
+				
+				{%endif%}
+				<br><span id="unuseful_num_{{comment.id}}"style="line-height:60%;color:gray;width:30px;font-size:15px" >{{comment.unuseful_counts}}</span>
+				</div>
+					<img class="usefulornot"  title="觉得没用" id="visitor_unuseful_{{comment.id}}" name="{{comment.id}}" style="width:60%;cursor:pointer;margin:0 auto;" src="../../static/img/down.png">
+				</div>
+		</td>
+		<td style="">
+			<div style="width:5%;">
+				<img style="margin-right:10px;height:50px;float:left" src="../../static/cwbbs/images/{{comment.user}}.jpg">
+			</div>
+
+			<p>{{forloop.counter }}楼说：</p>
+		</td>
+
+	</tr>
+	<tr>
+
+		<td colspan=2 style="border-radius:5px;background-color:white;padding:10px 10px ;min-width:1200px">
+				<p  >{{comment.comment_content|safe}}</p>
+		</td>
+	</tr>
+	<tr>
+
+		<td >
+			<a href="{% url 'user_detail' pk=post.author_id %}">
+			<font color="red">{{comment.user.nickname|default:"佚名" }}</font>
+		</a>
+			评论于 {{comment.create_time|date:'Y-m-d,l,H:i:s' }}
+			<button type="submit"  name="save_and_publish" class="btn"><font color="blue">回复TA</font></button>&nbsp
+			<a ><i id='c_praise{{comment.pk}}' name="{{comment.pk}}" class="c_praise fa fa-thumbs-up fa-x"></i></a>
+			<span id='c_praise{{comment.pk}}_num'>&nbsp{{comment.praise|default:"0"}}</span>	
+		</td>
+		</tr>
+		</table>
+
+		<hr style="border:1px solid #D0D0D0">
+	
+	<!--
+	{%if sub_comments %}
+		{% for sub_comment in sub_comments %}
+			<div class="sub_comment" style="margin-left:30px;background:white;	">
+			<div class="username" >{{sub_comment.user.nickname}}</div>
+			{{sub_comment.comment_content}}<br>
+			评论于 {{sub_comment.create_time|date:'Y-m-d,l,H:i:s' }}<hr style="border:1px solid #D0D0D0">
+			
+			</div>
+		{%endfor%}
+	{%endif%}
+	-->
+	<hr style="bolder:1px solid blue;width:100%">
+{%endfor%}
+
+{%if masage%}
+	<p id='masage' style="text-align:center;color:red">{{masage}}</p>
+{%endif%}
+<form method="POST">{% csrf_token %}
+	<p style="">编写评论：</p>{{cf.comment_content}}
+	<button style="margin-bottom:50px"type="submit"  name="save_and_publish" class="save btn btn-default">提交</button>
+</form>
+		<script src="http://apps.bdimg.com/libs/jquery/1.11.1/jquery.min.js"></script>
+		<script type="text/javascript">
+			$(document).ready(function(){
+				function getCookie(name) {  
+					var cookieValue = null;  
+					if (document.cookie && document.cookie != '') {  
+						var cookies = document.cookie.split(';');  
+						for (var i = 0; i < cookies.length; i++) {  
+							var cookie = jQuery.trim(cookies[i]);  
+							// Does this cookie string begin with the name we want?  
+							if (cookie.substring(0, name.length + 1) == (name + '=')) {  
+								cookieValue = decodeURIComponent(cookie.substring(name.length + 1));  
+								break;  
+							}  
+						}  
+					}  
+					return cookieValue;  
+				}  
+			  
+				function csrfSafeMethod(method) {  
+					// these HTTP methods do not require CSRF protection  
+					return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));  
+				}  
+				$.ajaxSetup({  
+					beforeSend: function(xhr, settings) {  
+					var csrftoken = getCookie('csrftoken');       
+					if (!csrfSafeMethod(settings.type) && !this.crossDomain) {  
+							xhr.setRequestHeader("X-CSRFToken", csrftoken);  
+						}  
+					}  
+				}); 
+				//var last_p={{post.praise}};
+				$("#p_praise").click(function(){
+					$.ajax({
+						type:"POST",
+						data: "p_praise",
+						url: "{% url 'praise' post.pk %}", //后台处理函数的url 这里用的是static url 需要与urls.py中的name一致
+						cache: false,
+						dataType: "json",
+						success: function(ret){
+							$('#result').html(ret.post_praise)                                         //成功时弹出view传回来的结果
+							$('#result0').html(ret.post_praise) 
+							if (ret.masage){
+								alert(ret.masage);
+								//alert(ret);
+								//alert(last_p);
+								}
+							//else{alert('赞成功')};
+						},
+						error: function(xhr, type, exception){
+							alert(xhr.statue, "Failed");                                         //成功时弹出view传回来的结果
+						},
+					});
+
+			});
+
+			$(".c_praise").each(function (){
+				//(this).click(function()的$(this).attr("id");获取当前点击的元素
+				$(this).click(function(){
+					var thisid = $(this).attr("id");//获取当前被点击元素的id
+					var thisname = $(this).attr("name");
+					//alert(thisname);
+				
+					post_url="/praise/"+thisname+"/"
+					//alert(thisname)
+					$.ajax({
+						type:"POST",
+						data: "c_praise",
+						url: post_url, //后台处理函数的url 这里用的是static url 需要与urls.py中的name一致
+						cache: false,
+						dataType: "json",
+						success: function(ret){
+							//alert(ret.comment_praise);
+							$("#"+thisid+"_num").html(ret.comment_praise)                                         //成功时弹出view传回来的结果
+							if (ret.masage){
+								alert(ret.masage);
+								//alert(ret);
+								//alert(last_p);
+								}
+							//else{alert('赞成功')};
+						},
+						error: function(xhr, type, exception){
+							alert(xhr.statue, "Failed");                                         //成功时弹出view传回来的结果
+						},
+				});
+			})
+			});
+			
+			$(".usefulornot").each(function (){
+				//(this).click(function()的$(this).attr("id");获取当前点击的元素
+				$(this).click(function(){
+					var thisid = $(this).attr("id");//获取当前被点击元素的id
+					var thisname = $(this).attr("name");
+					if (thisid.indexOf('author') >=0){
+						var who_click="is_author";
+						var statue=""
+					}else{
+						var who_click="is_visitor";
+						if (thisid.indexOf("unuseful") >= 0){
+							var statue="is_unuseful"
+						}else{var statue="is_useful"}
+					}
+				
+					post_url="/comment_usefulornot/"+thisname+"/";//处理的url
+					//alert(thisname)
+					$.ajax({
+						type:"POST",
+						data: {'who_click':who_click,'statue':statue,'post_id':{{post.pk}}},
+						url: post_url, //后台处理函数的url 这里用的是static url 需要与urls.py中的name一致
+						cache: false,
+						dataType: "json",
+						success: function(ret){ 
+							$("#useful_num_"+thisname).html(ret.useful_count)
+							$("#unuseful_num_"+thisname).html(ret.unuseful_count)
+							//alert(ret.useful_count)
+							if (ret.post_user_accept==1){
+								$("#author_useful_"+thisname).css("color","#00EC00")
+							}else{$("#author_useful_"+thisname).css("color","gray")}
+							$("#useful_num").html(ret.useful_count);   							
+							//成功时弹出view传回来的结果
+							if ( ret.masage ){
+								alert(ret.masage);
+								//alert(ret);
+								//alert(last_p);
+								}
+							//else{alert('赞成功')};
+						},
+						error: function(xhr, type, exception){
+							alert(xhr.statue, "Failed");                                        
+						},
+				});
+			});
+			});
+			
+			});
+		</script>	
+{% endblock %}

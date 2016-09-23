@@ -1,0 +1,67 @@
+{% extends 'cwbbs/base.html' %}
+{% load pagination_tags %}
+{% block content %}
+<div id="post_list">
+	
+	{%for post in posts%}
+	
+	<div class="post_title">
+		<a href="{% url 'post_detail' pk=post.pk %}">
+			<p>{{post.title|safe}}</p>
+		</a>
+	</div>
+	{%if post.summary%}
+	<div class="post_summary">
+		<a href="{% url 'post_detail' pk=post.pk %}">
+			<p>
+				<font color="black">
+					{{post.summary|safe}}
+				<font>
+			</p>
+		</a>		
+	</div>
+	{%endif%}
+	<br>
+	<div class="post_mark">
+	<p>作者：
+	{%if post.author.nickname%}
+	<a href="{% url 'user_detail' pk=post.author_id %}"><font color="red">{{post.author.nickname|default:"佚名"}}</a></font>  
+	{%else%}
+	{{post.author.nickname|default:"佚名"}}
+	{%endif%}
+	</p><p>查看：{{post.views}}</p>   
+	<p>评论数：{{post.comments_count|default:"0"}}</p>
+	<p><i class="fa fa-thumbs-up"></i> 
+	{{post.praise}}</p>  <p>排名：{{post.ranking}}</p> <p>发布于 {{post.published_date|date:'Y-m-d,l,H:i:s'}}</p>&nbsp
+	</div>
+	<hr style="border:1px solid black">
+	<br>
+	{%endfor%}
+	
+{% if posts.paginator.num_pages %}
+    <div class="pagination" style="top:500px;">
+        <span class="step-links">
+            {% if posts.has_previous %}
+                <a class="save btn btn-default" href="?page={{ posts.previous_page_number }}">上一页<<</a>
+			{% else %}
+				<a class="save btn btn-default" href="?page={{posts.paginator.num_pages}} ">跳到尾页</a>
+            {% endif %}
+            <span class="current">
+				{% for pg in posts.paginator.page_range %}
+					{% ifequal pg posts.number %}
+						<a  class="save btn btn-default current_page" href="?page={{ pg }}">{{ pg }}</a>
+					{%else%}
+						<a  class="save btn btn-default" href="?page={{ pg }}">{{ pg }}</a>
+					{%endifequal%}
+				{%endfor%}
+                &nbsp&nbsp{{ posts.number }} / {{ posts.paginator.num_pages }}页.
+            </span>
+            {% if posts.has_next %}
+                <a  class="save btn btn-default" href="?page={{ posts.next_page_number }}">>>下一页</a>
+			{% else %}
+				<a class="save btn btn-default" href="?page=1">回到首页</a>
+            {% endif %}
+        </span>
+    </div>
+    {% endif %}
+{% endblock %}

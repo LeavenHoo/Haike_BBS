@@ -1,0 +1,191 @@
+{% extends 'cwbbs/base.html' %}
+{% load staticfiles %}
+{% block content %}
+<!--<script>
+	//判断图片是否存在  
+	function CheckImgExists(imgurl) { 
+		alert(imgurl);	
+		alert(location.href);
+		var ImgObj = new Image(); 
+		ImgObj.src = imgurl;  
+		//没有图片，则返回-1  
+		if (ImgObj.fileSize > 0 || (ImgObj.width > 0 && ImgObj.height > 0)) {  
+			alert('true') ;  
+		} else {
+			alert('false') ;  	  
+		}
+		var str = location.href;
+
+		var arr = str.split("/");
+
+		delete arr[arr.length-1];
+
+		var dir = arr.join("/");
+
+		alert(dir);
+	} 
+</script>-->
+<script src="http://apps.bdimg.com/libs/jquery/1.11.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+				function getCookie(name) {  
+				var cookieValue = null;  
+				if (document.cookie && document.cookie != '') {  
+					var cookies = document.cookie.split(';');  
+					for (var i = 0; i < cookies.length; i++) {  
+						var cookie = jQuery.trim(cookies[i]);  
+						// Does this cookie string begin with the name we want?  
+						if (cookie.substring(0, name.length + 1) == (name + '=')) {  
+							cookieValue = decodeURIComponent(cookie.substring(name.length + 1));  
+							break;  
+						}  
+					}  
+				}  
+				return cookieValue;  
+			}  
+			  
+			function csrfSafeMethod(method) {  
+				// these HTTP methods do not require CSRF protection  
+				return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));  
+			}  
+			$.ajaxSetup({  
+				beforeSend: function(xhr, settings) {  
+				var csrftoken = getCookie('csrftoken');       
+				if (!csrfSafeMethod(settings.type) && !this.crossDomain) {  
+						xhr.setRequestHeader("X-CSRFToken", csrftoken);  
+					}  
+				}  
+			}); 
+				//var last_p={{post.praise}};
+				$("#u_praise").click(function(){
+					$.ajax({
+						type:"POST",
+						data: "u_praise",
+						url: "{% url 'praise' user1.pk %}", //后台处理函数的url 这里用的是static url 需要与urls.py中的name一致
+						cache: false,
+						dataType: "json",
+						success: function(ret){
+							$('#u_praise_result').html(ret.user_praise)                                         //成功时弹出view传回来的结果
+							 
+							if (ret.masage){
+								alert(ret.masage);
+								//alert(ret);
+								//alert(last_p);
+								}
+							//else{alert('赞成功')};
+						},
+						error: function(xhr, type, exception){
+							alert(xhr.statue, "Failed");                                         //成功时弹出view传回来的结果
+						},
+					});
+
+			});
+			});
+</script>
+	<div id="his_left"  class="border_gray">
+		<div id="his_potho_manage" style="margin:20px 20px">
+			<div id="his_photo" >
+				<img onerror="javascript:this.src='http://127.0.0.1:8000/static/cwbbs/images/{{user1.username}}.jpg';" alt="pic" style="float:center;width:100%;height:100%;margin:0 auto" src="../../../{{author.photo}}">
+				
+			<form action="/praise/{{user1.pk}}" style="margin-top:10px;margin-left:-35px;"method="get">{% csrf_token %}
+
+				<a  id='u_praise'><i style="margin-left:50%"class="fa fa-thumbs-up fa-2x"></i></a>
+				<span id='u_praise_result' style="font-size:25px">{{author.praise}}</span>
+			</form>
+			</div>
+		</div>
+		<div id="his_detail" >
+			<p>您在<font color="blue">{{author.nickname }}</font>的主页！</p>
+			<p>等级：<font color="red">
+			{%if author.experiences > 50000 %}
+				传说
+			{%else%}
+				{%if author.experiences > 30000%}
+					森林之王
+				{%else%}
+					{%if author.experiences > 15000%}
+						村长
+					{%else%}
+						{%if author.experiences > 10000%}
+							喜羊羊
+						{%else%}
+							{%if author.experiences > 6000%}
+								红太狼
+							{%else%}
+								{%if author.experiences > 3000%}
+									灰太狼
+								{%else%}
+									{%if author.experiences > 10000%}
+										小灰灰
+									{%else%}
+										小白菜
+									{%endif%}
+								{%endif%}
+							{%endif%}
+						{%endif%}
+					{%endif%}
+				{%endif%}
+			{%endif%}
+			</font></p>
+			<p>获赞：<font color="red">{{author.praise}}</font></p>
+			<p>经验：<font color="red">{{author.experiences}}</font></p>
+			<p>粉丝：<font color="red">{{author.fens_counts}}</font></p>
+			<p>帖子总数：<font color="red">{{posts|length }}</font></p>
+			<p>我的签名：<font color="red">{{author.signature}}</font>
+			</p>
+			<a style="margin-left:30px;" href="#" class="save btn btn-default">
+				关注<font color="blue">{{author.nickname }}</font>
+			</a>
+				<!--<form method="GET" class="post-form">
+				{{form.as_table}}
+				</form>-->
+		</div>
+		
+	</div>
+	<div id="his_posts" >
+			
+	<h2>TA发布的帖子：</h2>
+		<hr style="border:2px solid red">
+		{%if posts %}
+			{%for post in posts%}
+			    
+				<div class="post_title">
+					<a href="{% url 'post_detail' pk=post.pk %}">
+						<p>{{post.title|safe}}</p>
+					</a>
+				</div>
+				
+				<div class="post_summary">
+					<a href="{% url 'post_detail' pk=post.pk %}">
+						<p>
+							<font color="black">
+								{{post.summary|safe}}
+							<font>
+						</p>
+					</a>		
+				</div>
+
+				<br>
+			<div class="post_mark"><span>
+			<p>作者：<font color="red">{{post.author.nickname|default:"佚名"}}</font>  </p><p>查看：{{post.views}}</p>   
+			<p>评论数：{{post.comments_count|default:"0"}}</p>
+			<p>	<i class="fa fa-thumbs-up"></i>
+				<span id='result0_detail'>{{post.praise}}</span>
+			</p>
+			{{post.praise}}</p>  <p>排名：{{post.ranking}}</p> <p>发布于 {{post.published_date|date:'Y-m-d,l,H:i:s'}}</p>.....
+			</span>				<br>
+			</div>
+				<hr style="border:1px solid black">
+			
+			{%endfor%}
+		{%else%}
+			<h3><p style="margin-left:20%;color:blue">您还未发表任何文章，点击<a style="font-size:28px;color:red" href="{% url 'post_new'%}" >新帖</a>赶快去创建新帖吧！</h3>
+		{%endif%}
+		</div>
+	<div id="user_right_detail" class="border_gray">
+
+	</div>
+
+{% endblock %}
+
+

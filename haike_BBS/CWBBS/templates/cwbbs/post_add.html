@@ -1,0 +1,18 @@
+{% extends 'cwbbs/index.html' %}
+{% block content %}
+
+    <h3>{{ post.title }}</h3>
+    
+	<div class="summary"><p>{{ post.summary }}</p></div>
+	
+	<br>
+	<div class="content">
+	<p>
+	{{ post.text}}
+	</p>
+	</div>
+	    <hr style="bolder:3px solid black;">
+	</div>
+		    
+	<pre>查看：{{post.views}}   赞：{{post.praise}}   排名：{{post.ranking}}  {{post.author}} 发布于 {{post.published_date}}</pre>
+{% endblock %}

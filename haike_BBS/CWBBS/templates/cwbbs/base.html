@@ -1,0 +1,58 @@
+{% load staticfiles %}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<title>嗨客主页</title>
+<link rel="stylesheet" type="text/css" href="{% static 'wangEditor/dist/css/wangEditor.min.css' %}">
+<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'css/cwbbs.css' %}">
+<link rel="stylesheet" href="{% static 'css/font-awesome.css' %}">
+<link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+<link rel="stylesheet" href="{% static 'css/font-awesome-ie7.min.css' %}">
+
+</head>
+<body>
+    <script type="text/javascript" src="{% static 'wangEditor/dist/js/lib/jquery-1.10.2.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'wangEditor/dist/js/wangEditor.min.js' %}"></script>
+
+
+
+	<div id="index_top_bar">
+	<a  href="/" style="float:left;margin-left:20px;margin-top:5px;font-size:30px;color:red">嗨客</a>
+	{% if user.is_authenticated or is_authenticated  %}
+		<a style="float:right;margin-right:20px;margin-top:15px;color:white" href="{%url 'logout'%}">注销</a>
+		<a  style="float:right;margin-right:20px;margin-top:15px;color:white" href="{% url 'user_profile' pk=user.pk %}">{{user.username }}</a>
+	{%else%}
+		<a style="float:right;margin-right:20px;margin-top:15px;color:white"   href="{% url 'register'%}">注册</a>
+		<a style="float:right;margin-right:20px;margin-top:15px;color:white"  href="{% url 'login' %}">登录</a>
+    {% endif %}	
+
+		<ul>
+			{%for category in categories %}
+				<a href="{% url 'category'  pk=category.pk %}">
+				<li> 
+				{{category.name}}	
+				</li>
+				</a>
+			{% endfor %}
+		
+		</ul>
+			<!--<li>技术讨论</li><li>游戏娱乐</li><li>心灵鸡汤</li><li>其他</li>-->
+	</div>
+	<a style="float:right;margin-left:20px;font-size:15px;margin-right:40px;" href="/" >留言</a>
+	<a style="float:right;margin-left:20px;font-size:15px;" href="{% url 'post_new'%}" >新帖</a>
+	<a style="float:right;margin-left:20px;font-size:15px;" href="{% url 'post_draft'%}" >我的草稿</a>
+
+	<div id="box" style="margin-top:20px;" >
+	<div id="men">
+
+
+
+	{% block content %}
+	
+	{% endblock%}
+	</div>
+	</div>
+</body>
+</html>

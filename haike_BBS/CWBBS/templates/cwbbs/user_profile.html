@@ -1,0 +1,148 @@
+{% extends 'cwbbs/base.html' %}
+{% load staticfiles %}
+{% block content %}
+<script>
+	function show_chg_form(swh){
+		var id=document.getElementById("chg_pfile_div");
+		//alert(id.style.display);
+		if (swh==1){
+			id.style.visibility="visible";
+			document.documentElement.style.overflow='hidden'
+		}
+		else{
+		id.style.visibility="hidden";
+		document.documentElement.style.overflow='visible	'
+		};
+		
+		//alert(id.style.display);
+	}
+</script>
+	<div id="user_left"  class="border_gray">
+		<div id="potho_manage" style="margin:20px 20px">
+			<div id="user_photo" >
+				<img style="float:center;width:100%;height:100%;margin:0 auto" src="../../{{author.photo}}">
+			</div>
+			{%if puf%}
+				<div tabindex="-1" role="dialog"  id="chg_pfile_div" >
+					<div id="chg_pfile_sub_div">
+					<form  action="{%url 'user_profile' pk=user.pk%}"  method = 'post' style="height:auto;width:auto;margin:30px 30px 30px 30px;background:white;"  enctype="multipart/form-data">
+					{% csrf_token %}
+					<div >
+					<pre>昵    称：{{puf.nickname}}<font color="red" style="font-size:12px">  修改昵称必填，选填</font></pre><br>
+					<pre>签    名：{{puf.signature}}<font color="red" style="font-size:12px">  修改签名必填，选填</font></pre><br>
+					<pre>密    码：{{puf.password}}<font color="red" style="font-size:12px">  修改密码必填，选填</font></pre><br>
+					<pre>确认密码：{{puf.password_check}}<font color="red" style="font-size:12px">  修改密码必填，选填</font></pre><br>
+					<pre>邮    箱：{{puf.email}}<font color="red" style="font-size:12px">  修改邮箱必填，选填</font></pre><br>
+					<pre><p style="float:left;margin-left:-27px;">修改头像：</p><span style="width:50px:float:left;">{{puf.photo}}</span>
+					</div>
+						<button type="submit"  name="save_and_publish" class="save btn btn-default" onclick="show_chg_form(0)">保存</button>  
+						<button  name="save_and_publish" class="save btn btn-default" style="margin-left:10px"onclick="show_chg_form(0)">取消</button>
+					</form>
+					</div>
+					</div>
+			{%endif%}
+		</div>
+		<div id="user_profile" >
+			<p><font color="blue">{{author.nickname }}（{{user.username}}）</font>，欢迎来到您的主页！</p>
+			
+			<p>等级：<font color="red">
+			{%if author.experiences > 50000 %}
+				传说
+			{%else%}
+				{%if author.experiences > 30000%}
+					森林之王
+				{%else%}
+					{%if author.experiences > 15000%}
+						村长
+					{%else%}
+						{%if author.experiences > 10000%}
+							喜羊羊
+						{%else%}
+							{%if author.experiences > 6000%}
+								红太狼
+							{%else%}
+								{%if author.experiences > 3000%}
+									灰太狼
+								{%else%}
+									{%if author.experiences > 10000%}
+										小灰灰
+									{%else%}
+										小白菜
+									{%endif%}
+								{%endif%}
+							{%endif%}
+						{%endif%}
+					{%endif%}
+				{%endif%}
+			{%endif%}
+			</font></p>
+			<p>获赞：<font color="red">{{author.praise}}</font></p>
+			<p>经验：<font color="red">{{author.experiences}}</font></p>
+			<p>粉丝：<font color="red">{{author.fens_counts}}</font></p>
+			<p>邮箱：
+			{%if user.email%}
+			<font color="red">{{user.email}}</font>
+			{%else%}
+			<button  href="{%url 'user_profile' pk=user.pk%}" onclick="show_chg_form(1)" class="save btn btn-default">设置邮箱</button>
+			
+			{%endif%}
+			</p>
+			<p>帖子总数：<font color="red">{{posts|length }}</font></p>
+			<p>我的签名：<font color="red">{{author.signature}}</font>
+			<button style="float:right;margin-left:10px;" href="{%url 'user_profile' pk=user.pk%}" onclick="show_chg_form(1)" class="save btn btn-default">
+			修改个人资料
+			</button>
+			</p>
+				<!--<form method="GET" class="post-form">
+				{{form.as_table}}
+				</form>-->
+		</div>
+		
+	</div>
+
+	<div id="my_posts">
+		<h2>我发布的帖子：</h2>
+		<hr style="border:2px solid red">
+		{%if posts %}
+			{%for post in posts%}
+			    
+				<div class="post_title">
+					<a href="{% url 'post_detail' pk=post.pk %}">
+						<p>{{post.title|safe}}</p>
+					</a>
+				</div>
+				
+				<div class="post_summary">
+					<a href="{% url 'post_detail' pk=post.pk %}">
+						<p>
+							<font color="black">
+								{{post.summary|safe}}
+							<font>
+						</p>
+					</a>		
+				</div>
+
+				<br>
+			<div class="post_mark"><span>
+			<p>作者：<font color="red">{{post.author.nickname|default:"佚名"}}</font>  </p><p>查看：{{post.views}}</p>   
+			<p>评论数：{{post.comments_count|default:"0"}}</p>
+			<p>	<i class="fa fa-thumbs-up"></i>
+				<span id='result0'>{{post.praise}}</span>
+			</p>
+			{{post.praise}}</p>  <p>排名：{{post.ranking}}</p> <p>发布于 {{post.published_date|date:'Y-m-d,l,H:i:s'}}</p>.....
+			</span>				<br>
+			</div>
+				<hr style="border:1px solid black">
+			
+			{%endfor%}
+		{%else%}
+			<h3><p style="margin-left:20%;color:blue">您还未发表任何文章，点击<a style="font-size:28px;color:red" href="{% url 'post_new'%}" >新帖</a>赶快去创建新帖吧！</h3>
+		{%endif%}
+		</div>
+	<div id="user_right" class="border_gray">
+
+	</div>
+
+{% endblock %}
+
+
