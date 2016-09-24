@@ -344,9 +344,6 @@ def register(request):
     import re
     zhPattern = re.compile(u'[\u4e00-\u9fa5]+')#
     #一个小应用，判断一段文本中是否包含简体中：
-    
-    
-
     #curtime=time.strftime("%Y-%m-%d %H:%M:%S",time.localtime());
     errors=""
     if request.method == "POST":
@@ -545,11 +542,11 @@ def user_detail(request,pk):
             return redirect('user_profile',pk=user1.id)
     return render(request, 'cwbbs/user_detail.html', {'user1': user1,'author':author,'posts':posts,'categories':category})
     
-@login_required    
-def comment(request,pk):
-    if request.method=="POST":
-        cf=CommentForm(request.post)
-        
+# @login_required    
+# def comment(request,pk):
+#     if request.method=="POST":
+#         cf=CommentForm(request.post)
+#         
 @login_required        
 def post_comment(request):
     if request.method=="POST":

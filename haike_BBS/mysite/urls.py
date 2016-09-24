@@ -22,5 +22,5 @@ from CWBBS import views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'', include('CWBBS.urls')),
-    url(r'^comment/',include('django_comments.urls'))
+    #url(r'^comment/',include('django_comments.urls'))
 ]

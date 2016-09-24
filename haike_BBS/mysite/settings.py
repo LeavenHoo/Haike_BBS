@@ -56,11 +56,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'CWBBS',
-    'django_comments',
-    'django.contrib.sites',
+    #'django_comments',
+    #'django.contrib.sites',
     'pagination',
 ]
-SITE_ID = 1
+#SITE_ID = 1
 # SOUTH_DATABASE_ADAPTERS = {
 #      'default': "south.db.mysql"
 #  }
